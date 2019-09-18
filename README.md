@@ -1,3 +1,5 @@
+## Took this over, so yeet 
+
 # noNotch
 Hide the notch with a nice black border on iPhone X.
 
