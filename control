@@ -1,6 +1,6 @@
 Package: com.shade.nonotch
 Name: noNotch
-Version: 1.1.1
+Version: 1.2
 Architecture: iphoneos-arm
 Description: Hides the notch on iPhone X. Issues are present. Source code: https://github.com/jakeajames/noNotch
 Pre-Depends: firmware(>=11.0), mobilesubstrate, com.rpetrich.rocketbootstrap (>= 1.0.6)
