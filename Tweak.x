@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 #import <_Prefix/IOSMacros.h>
 #import <AppSupport/CPDistributedMessagingCenter.h>
-#import <UIKit/UIStatusBar.h>
+#import <Cephei/HBPreferences.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <rocketbootstrap/rocketbootstrap.h>
 #import <SpringBoard/SpringBoard.h>
@@ -14,29 +14,34 @@ UIView *noNotch; //the black border which will cover the notch
 UIView *cover; //a supporting view which will help us hide and show the status bar
 UIInterfaceOrientation oldOrientation;
 
+static BOOL enabled;
+
 //our hide and show methods. Add a nice transition
 void hide() {
-    [UIView animateWithDuration:1.0 animations:^{
-        noNotchW.alpha = 0;
+    [UIView animateWithDuration:0.5 animations:^{
+        noNotchW.alpha = 0.0;
     }];
 }
+
 void show() {
     if (oldOrientation != UIInterfaceOrientationPortrait) {
         return;
     }
 
-    [UIView animateWithDuration:1.0 animations:^{
-        noNotchW.alpha = 1;
+    [UIView animateWithDuration:0.5 animations:^{
+        noNotchW.alpha = 1.0;
     }];
 }
+
 void hideSB() {
-    [UIView animateWithDuration:1.0 animations:^{
-        cover.alpha = 0;
+    [UIView animateWithDuration:0.5 animations:^{
+        cover.alpha = 0.0;
     }];
 }
+
 void showSB() {
-    [UIView animateWithDuration:1.0 animations:^{
-        cover.alpha = 1;
+    [UIView animateWithDuration:0.5 animations:^{
+        cover.alpha = 1.0;
     }];
 }
 
@@ -339,6 +344,35 @@ BOOL isOnSpringBoard() {
     if (IN_SPRINGBOARD) {
         [messagingCenter runServerOnCurrentThread];
         %init(SBHooks);
+
+        // Load prefs
+        HBPreferences *preferences = [HBPreferences preferencesForIdentifier:@"com.shade.nonotch"];
+        [preferences registerBool:&enabled default:NO forKey:@"enabled"];
+
+        // Callback
+        [preferences registerPreferenceChangeBlock:^{
+            // Show or hide if needed
+            if (enabled) {
+                show();
+            } else {
+                hide();
+            }
+        }];
+
+        // Apply stuff when SB loaded
+        NSNotificationCenter * __weak center = [NSNotificationCenter defaultCenter];
+        id __block token = [center addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+            if (enabled) {
+                // Do nothing
+                return;
+            }
+
+            // Hide if disabled
+            hide();
+
+            // Deregister as only created once
+            [center removeObserver:token];
+        }];
     } else {
         %init(AppHooks);
     }
