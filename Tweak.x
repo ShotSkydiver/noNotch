@@ -1,8 +1,11 @@
+#import <UIKit/UIKit.h>
+#import <_Prefix/IOSMacros.h>
+#import <AppSupport/CPDistributedMessagingCenter.h>
 #import <UIKit/UIStatusBar.h>
 #import <CoreGraphics/CoreGraphics.h>
-#import <SpringBoard/SpringBoard.h>
-#import <AppSupport/CPDistributedMessagingCenter.h>
 #import <rocketbootstrap/rocketbootstrap.h>
+#import <SpringBoard/SpringBoard.h>
+#import <UIKit/UIStatusBar.h>
 
 CPDistributedMessagingCenter *messagingCenter; //message center
 
@@ -205,17 +208,10 @@ BOOL isOnSpringBoard() {
     
 }
 %end*/
-//when control center is opened hide the status bar
+
 %hook SBControlCenterController
 
-- (void)presentAnimated:(BOOL)animated {
-    if (cover.alpha != 0.0) {
-        hideSB();
-    }
-
-    %orig;
-}
-
+//when control center is opened hide the status bar
 - (void)presentAnimated:(BOOL)animated completion:(id)completion {
     if (cover.alpha != 0.0) {
         hideSB();
@@ -223,15 +219,8 @@ BOOL isOnSpringBoard() {
 
     %orig;
 }
+
 //when control center is dismissed show the status bar
-- (void)dismissAnimated:(BOOL)animated {
-    if (cover.alpha == 0.0) {
-        showSB();
-    }
-
-    %orig;
-}
-
 - (void)dismissAnimated:(BOOL)animated completion:(id)completion {
     if (cover.alpha == 0.0) {
         showSB();
@@ -248,6 +237,14 @@ BOOL isOnSpringBoard() {
     %orig;
 }
 
+- (void)_willPresent {
+    if (cover.alpha != 0.0) {
+        hideSB();
+    }
+
+    %orig;
+}
+
 - (void)_didDismiss {
     if (cover.alpha == 0.0) {
         showSB();
@@ -257,15 +254,18 @@ BOOL isOnSpringBoard() {
 }
 
 %end
-//get rid of the notch cover when user enters wiggle mode. Can't think of an alternative
-%hook SBEditingDoneButton
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    if (noNotchW.alpha != 0.0) {
+//get rid of the notch cover when user enters wiggle mode. Can't think of an alternative
+%hook SBIconController
+
+- (void)setIsEditing:(BOOL)editing withFeedbackBehavior:(id)behavior {
+    if (!editing && noNotchW.alpha != 1.0) {
+        show();
+    } else if (editing && noNotchW.alpha != 0.0) {
         hide();
     }
 
-    return %orig;
+    %orig;
 }
 
 %end
@@ -322,7 +322,7 @@ BOOL isOnSpringBoard() {
 %hook UIApplicationDelegate
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    if ([[[application valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"] alpha] == 0 || [[[application valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"] isHidden]) {
+    if ([[[application valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"] alpha] == 0.0 || [[[application valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"] isHidden]) {
         [messagingCenter sendMessageName:@"hide" userInfo:nil];
     }
 
