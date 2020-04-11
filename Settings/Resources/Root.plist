@@ -4,9 +4,25 @@
 <dict>
 	<key>items</key>
 	<array>
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>headerCellClass</key>
+            <string>HBPackageNameHeaderCell</string>
+            <key>icon</key>
+            <string>icon.png</string>
+            <key>packageIdentifier</key>
+            <string>com.shade.nonotch</string>
+            <key>titleColor</key>
+            <string>#ffffff</string>
+            <key>subtitleColor</key>
+            <string>#aaaaaa</string>
+        </dict>
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Respring required.</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -18,10 +34,56 @@
 			<key>key</key>
 			<string>enabled</string>
 			<key>label</key>
-			<string>Enabled</string>
+			<string>Enable</string>
 			<key>PostNotification</key>
             <string>com.shade.nonotch/ReloadPrefs</string>
 		</dict>
+		<dict>
+		    <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Set a custom height for the notch cover frame</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSEditTextCell</string>
+            <key>placeholder</key>
+            <string>-16</string>
+            <key>bestGuess</key>
+            <string>-18</string>
+            <key>defaults</key>
+            <string>com.shade.nonotch</string>
+            <key>isDecimalPad</key>
+            <true/>
+            <key>key</key>
+            <string>notchCoverHeight</string>
+            <key>label</key>
+            <string>Notch Cover Height</string>
+            <key>PostNotification</key>
+            <string>com.shade.nonotch/ReloadPrefs</string>
+        </dict>
+	    <dict>
+	        <key>cell</key>
+	        <string>PSGroupCell</string>
+	        <key>footerText</key>
+	        <string>Developed by ShotSkydiver, based on noNotch by ShadeZepheri</string>
+	        <key>footerAlignment</key>
+	        <string>1</string>
+	    </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>HBTwitterCell</string>
+        </dict>
+        <dict>
+            <key>cellClass</key>
+            <string>HBTwitterCell</string>
+            <key>label</key>
+            <string>ShotSkydiver</string>
+            <key>user</key>
+            <string>ShotSkydiver</string>
+        </dict>
 	</array>
 	<key>title</key>
 	<string>noNotch</string>

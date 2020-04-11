@@ -15,6 +15,7 @@ UIView *cover; //a supporting view which will help us hide and show the status b
 UIInterfaceOrientation oldOrientation;
 
 static BOOL enabled;
+static CGFloat notchCoverHeight;
 
 //our hide and show methods. Add a nice transition
 void hide() {
@@ -73,9 +74,9 @@ BOOL isOnSpringBoard() {
 - (void)layoutSubviews {    
     CGRect wholeFrame = [UIScreen mainScreen].bounds; //whole screen
     CGRect sbFrame = wholeFrame;
-    sbFrame.size.height = 32;
-    CGRect frame = CGRectMake(-50, -16, wholeFrame.size.width + 100, wholeFrame.size.height + 200); //this is the border which will cover the notch
-    
+    sbFrame.size.height = 42;
+    CGRect frame = CGRectMake(-50, notchCoverHeight, wholeFrame.size.width + 100, wholeFrame.size.height + 200); //this is the border which will cover the notch
+    // for frame above: -16 changes the height of the notch frame
     if (!noNotchW) {
         [messagingCenter registerForMessageName:@"hide" target:self selector:@selector(hide:)];
         [messagingCenter registerForMessageName:@"hide2" target:self selector:@selector(hide:)]; //apps need special treatment
@@ -179,14 +180,14 @@ BOOL isOnSpringBoard() {
 
 - (void)setFrame:(CGRect)frame {
     frame.origin.y = -2;
-    frame.size.height = 32;
+    frame.size.height = 42;
     %orig(frame);
 }
 
 - (CGRect)bounds {
     CGRect frame = %orig;
     frame.origin.y = -2;
-    frame.size.height = 32;
+    frame.size.height = 42;
     return frame;
 }
 
@@ -347,7 +348,8 @@ BOOL isOnSpringBoard() {
 
         // Load prefs
         HBPreferences *preferences = [HBPreferences preferencesForIdentifier:@"com.shade.nonotch"];
-        [preferences registerBool:&enabled default:NO forKey:@"enabled"];
+        [preferences registerBool:&enabled default:NO forKey:@"enabled"]; 
+        [preferences registerFloat:&notchCoverHeight default:-18 forKey:@"notchCoverHeight"]; 
 
         // Callback
         [preferences registerPreferenceChangeBlock:^{
